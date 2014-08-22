@@ -57,7 +57,7 @@ $ ./cs_api.py --help
 
 ```
 Usage:
-  cs_api.py (--api_key=<api_key> --secret_key=<secret_key>) [options]
+  cs_api.py (--api_key=<arg> --secret_key=<arg>) [options]
   cs_api.py (-h | --help)
 
 Options:
@@ -83,7 +83,7 @@ $ ./api_examples.py --help
 
 ```
 Usage:
-  api_examples.py (--api_key=<api_key> --secret_key=<secret_key>) [options]
+  api_examples.py (--api_key=<arg> --secret_key=<arg>) [options]
   api_examples.py (-h | --help)
 
 Options:

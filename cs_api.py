@@ -16,7 +16,7 @@
 
 """
 Usage:
-  cs_api.py (--api_key=<api_key> --secret_key=<secret_key>) [options]
+  cs_api.py (--api_key=<arg> --secret_key=<arg>) [options]
   cs_api.py (-h | --help)
 
 Options:
@@ -105,7 +105,7 @@ class API(object):
                 print response.text
                
             if self.logging:
-                with open(args['--log'], 'a') as f:
+                with open(self.log, 'a') as f:
                     f.write("GET "+url)
                     f.write('\n')
                     f.write('\n')
@@ -126,7 +126,7 @@ class API(object):
 
             return result
         else:
-            print("ERROR: api_key, secret_key and a request command param are all required to use the api...")
+            print("ERROR: --api_key, --secret_key and a request command param are all required to use the api...")
             return None
 
             
