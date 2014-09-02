@@ -59,7 +59,7 @@ class API(object):
         self.host = args['--host']
         self.protocol = args['--protocol']
         self.base_path = args['--base_path']
-        self.poll_interval = args['--poll_interval']
+        self.poll_interval = float(args['--poll_interval'])
         self.logging = True if args['--logging'].lower() == 'true' else False
         self.log = args['--log']
         self.log_dir = os.path.dirname(self.log)
