@@ -32,11 +32,11 @@ INSTALL
 =======
 This project does not need to be installed, it can be run in-place.  However, it does depend on a few libraries to keep things simple.
 
-docops
+docopt
 ------
 
 ``` bash
-$ pip install docops
+$ pip install docopt
 ```
 
 requests
