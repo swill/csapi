@@ -64,13 +64,10 @@ Options:
   -h --help                 Show this screen.
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
-  --host=<arg>              CS IP or hostname (including port) 
-                            [default: 127.0.0.1:8080].
-  --protocol=<arg>          Protocol used to connect to CS (http | https) 
-                            [default: http].
-  --base_path=<arg>         Base CS Api path [default: /client/api].
-  --poll_interval=<arg>     Interval, in seconds, to check for a result on 
-                            async jobs [default: 5].
+  --endpoint=<arg>          CS Endpoint 
+                            [default: http://127.0.0.1:8080/client/api].
+  --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs 
+                            [default: 5].
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created 
@@ -90,13 +87,10 @@ Options:
   -h --help                 Show this screen.
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
-  --host=<arg>              CS IP or hostname (including port) 
-                            [default: 127.0.0.1:8080].
-  --protocol=<arg>          Protocol used to connect to CS (http | https) 
-                            [default: http].
-  --base_path=<arg>         Base CS Api path [default: /client/api].
-  --poll_interval=<arg>     Interval, in seconds, to check for a result on 
-                            async jobs [default: 5].
+  --endpoint=<arg>          CS Endpoint 
+                            [default: http://127.0.0.1:8080/client/api].
+  --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs 
+                            [default: 5].
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created 
