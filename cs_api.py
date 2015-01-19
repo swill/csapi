@@ -23,9 +23,7 @@ Options:
   -h --help                 Show this screen.
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
-  --host=<arg>              CS IP or hostname (including port) [default: 127.0.0.1:8080].
-  --protocol=<arg>          Protocol used to connect to CS (http | https) [default: http].
-  --base_path=<arg>         Base CS Api path [default: /client/api].
+  --endpoint=<arg>          CS Endpoint [default: http://127.0.0.1:8080/client/api].
   --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs [default: 5].
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
@@ -56,9 +54,7 @@ class API(object):
     def __init__(self, args):
         self.api_key = args['--api_key']
         self.secret_key = args['--secret_key']
-        self.host = args['--host']
-        self.protocol = args['--protocol']
-        self.base_path = args['--base_path']
+        self.endpoint = args['--endpoint']
         self.poll_interval = float(args['--poll_interval'])
         self.logging = True if args['--logging'].lower() == 'true' else False
         self.log = args['--log']
@@ -68,12 +64,28 @@ class API(object):
             os.makedirs(self.log_dir)
         if self.clear_log and os.path.exists(self.log):
             open(self.log, 'w').close()
+
+    def sign(self, params):
+        def cs_quote(v):
+            return urllib.quote(str(v).encode('utf-8'), safe=".-*_")
+
+        # build the query string
+        query = "&".join(sorted([
+            "=".join((k, cs_quote(v))).lower()
+            for k, v in params.items()
+        ]))
+        return base64.b64encode(
+            hmac.new(
+                self.secret_key.encode('utf-8'), 
+                query.encode('utf-8'), 
+                hashlib.sha1).digest()
+            ).decode('utf-8').strip()
         
-    def request(self, params):
+    def request(self, params, method=None):
         """
         Builds the request and returns a python dictionary of the result or None.
 
-        :param params: the query parameters to be added to the url
+        :param params: the query parameters to be sent to the server
         :type params: dict
 
         :returns: the result of the request as a python dictionary
@@ -83,20 +95,12 @@ class API(object):
             result = None
             params['response'] = 'json'
             params['apiKey'] = self.api_key
+            params['signature'] = self.sign(params)
 
-            # build the query string
-            query_params = map(lambda (k,v):k+"="+urllib.quote(str(v)).replace('/', '%2F'), params.items())
-            query_string = "&".join(query_params)
-            
-            # build signature
-            query_params.sort()
-            signature_string = "&".join(query_params).lower()
-            signature = urllib.quote(base64.b64encode(hmac.new(self.secret_key, signature_string, hashlib.sha1).digest()))
-
-            # final query string...
-            url = self.protocol+"://"+self.host+self.base_path+"?"+query_string+"&signature="+signature
-
-            response = requests.get(url)
+            if method and method.upper() == 'POST':
+                response = requests.post(self.endpoint, data=params)
+            else:
+                response = requests.get(self.endpoint, params=params)
 
             if response.ok:
                 result = response.json()
@@ -106,8 +110,13 @@ class API(object):
                
             if self.logging:
                 with open(self.log, 'a') as f:
-                    f.write("GET "+url)
-                    f.write('\n')
+                    if method:
+                        f.write("%s %s" % (method.upper(), response.url))
+                        f.write('\n')
+                        pprint.pprint(params, f, 2)
+                    else:
+                        f.write("GET %s" % (response.url))
+                        f.write('\n')
                     f.write('\n')
                     if response.ok:
                         #pprint.pprint(response.headers, f, 2)  # if you want to log the headers too...
