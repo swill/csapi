@@ -34,9 +34,8 @@ from docopt import docopt
 from cs_api import API
 import pprint
 
-args = docopt(__doc__)
-
 if __name__ == '__main__':
+    args = docopt(__doc__) # get the command line arguments...
     api = API(args) # call the constructor with the docopts arguments...
 
     pprint.pprint(api.request({
