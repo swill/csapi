@@ -21,7 +21,7 @@ Builds the request and returns a python dictionary of the result or None.
 Here is a simple example:
 
 ``` python
-api = API(args)
+api = API(__doc__)
 accounts = api.request({
     'command':'listAccounts'
 })
@@ -57,21 +57,23 @@ $ ./cs_api.py --help
 
 ```
 Usage:
-  cs_api.py (--api_key=<arg> --secret_key=<arg>) [options]
+  cs_api.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
   cs_api.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
+  --json=<arg>              Path to a JSON config file with the same names 
+                              as the options (without the -- in front).
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
   --endpoint=<arg>          CS Endpoint 
-                            [default: http://127.0.0.1:8080/client/api].
+                              [default: http://127.0.0.1:8080/client/api].
   --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs 
-                            [default: 5].
+                              [default: 5].
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created 
-                            [default: True].
+                              [default: True].
 ```
 
 ``` bash
@@ -80,21 +82,23 @@ $ ./api_examples.py --help
 
 ```
 Usage:
-  api_examples.py (--api_key=<arg> --secret_key=<arg>) [options]
+  api_examples.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
   api_examples.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
+  --json=<arg>              Path to a JSON config file with the same names 
+                              as the options (without the -- in front).
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
   --endpoint=<arg>          CS Endpoint 
-                            [default: http://127.0.0.1:8080/client/api].
+                              [default: http://127.0.0.1:8080/client/api].
   --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs 
-                            [default: 5].
+                              [default: 5].
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created 
-                            [default: True].
+                              [default: True].
 ```
 
 This project can be run as a stand alone script or the `API` object can be imported into other scripts in this directory as a library.
