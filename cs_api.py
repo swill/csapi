@@ -16,11 +16,12 @@
 
 """
 Usage:
-  cs_api.py (--api_key=<arg> --secret_key=<arg>) [options]
+  cs_api.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
   cs_api.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
+  --json=<arg>              Path to a JSON config file with the same names as the options (without the -- in front).
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
   --endpoint=<arg>          CS Endpoint [default: http://127.0.0.1:8080/client/api].
@@ -30,10 +31,11 @@ Options:
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
 """
 
-from docopt import docopt
+import docopt
 import base64
 import hmac
 import hashlib
+import json
 import os
 import pprint
 import requests
@@ -44,12 +46,13 @@ class API(object):
     """
     Instantiate this class with the docops arguments, then use the 'request' method to make calls to the CloudStack API.
 
-    api = API(args)
+    api = API(__doc__)
     accounts = api.request({
         'command':'listAccounts'
     })
     """
-    def __init__(self, args):
+    def __init__(self, doc_str):
+        args = self.load_config(doc_str)
         self.api_key = args['--api_key']
         self.secret_key = args['--secret_key']
         self.endpoint = args['--endpoint']
@@ -62,6 +65,22 @@ class API(object):
             os.makedirs(self.log_dir)
         if self.clear_log and os.path.exists(self.log):
             open(self.log, 'w').close()
+
+    def load_config(self, doc_str):
+        args = docopt.docopt(doc_str)
+        dargs = docopt.parse_defaults(doc_str)
+        defaults = {}
+        for opt in dargs:
+            if opt.value: defaults[opt.long] = opt.value
+        config = None
+        if '--json' in args:
+            with open(args['--json']) as json_config:
+                config = json.load(json_config)
+        if config:
+            for key, value in config.iteritems():
+                if '--%s' % (key) not in args or not args['--%s' % (key)] or args['--%s' % (key)] == defaults['--%s' % (key)]:
+                    args['--%s' % (key)] = value
+        return args
 
     def sign(self, params):
         def cs_quote(v):
@@ -138,8 +157,7 @@ class API(object):
 
             
 if __name__ == '__main__':
-    args = docopt(__doc__) # get the command line arguments...
-    api = API(args) # call the constructor with the docopts arguments...
+    api = API(__doc__) # call the constructor with the __doc__ value...
     
     pprint.pprint(api.request({
         'command':'listAccounts'

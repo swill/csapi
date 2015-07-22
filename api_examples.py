@@ -16,11 +16,12 @@
 
 """
 Usage:
-  api_examples.py (--api_key=<arg> --secret_key=<arg>) [options]
+  api_examples.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
   api_examples.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
+  --json=<arg>              Path to a JSON config file with the same names as the options (without the -- in front).
   --api_key=<arg>           CS Api Key.
   --secret_key=<arg>        CS Secret Key.
   --endpoint=<arg>          CS Endpoint [default: http://127.0.0.1:8080/client/api].
@@ -30,13 +31,11 @@ Options:
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
 """
 
-from docopt import docopt
 from cs_api import API
 import pprint
 
 if __name__ == '__main__':
-    args = docopt(__doc__) # get the command line arguments...
-    api = API(args) # call the constructor with the docopts arguments...
+    api = API(__doc__) # call the constructor with the __doc__ value...
 
     pprint.pprint(api.request({
         'command':'listAccounts'
