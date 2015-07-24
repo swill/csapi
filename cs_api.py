@@ -58,10 +58,10 @@ class API(object):
         self.secret_key = args['--secret_key']
         self.endpoint = args['--endpoint']
         self.poll_interval = float(args['--poll_interval'])
-        self.logging = args['--logging']
+        self.logging = True if args['--logging'].lower() == 'true' else False
         self.log = args['--log']
         self.log_dir = os.path.dirname(self.log)
-        self.clear_log = args['--clear_log']
+        self.clear_log = True if args['--clear_log'].lower() == 'true' else False
         if self.log_dir and not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
         if self.clear_log and os.path.exists(self.log):
@@ -69,7 +69,7 @@ class API(object):
 
     def load_config(self, doc_str):
         args = docopt.docopt(doc_str)
-        is_set = [x.split('=')[0] for x in sys.argv[1:] if len(x.split('=')) > 0] # set by cmd line
+        is_set = [x.split('=')[0] for x in sys.argv[1:] if len(x.split('=')) > 0 and x.split('=')[0].startswith('-')] # set by cmd line
         config = None
         if '--json' in args:
             with open(args['--json']) as json_config:
