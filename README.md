@@ -1,8 +1,13 @@
 Apache CloudStack API Wrapper
 =============================
-This project is a minimalist wrapper around the Apache CloudStack API.  Its purpose is to expedite the process of testing the API and building scripts to do useful tasks.
 
-This project exposes a single `API` class which has a single `request` method.  This method takes a python dictionary of request parameters and returns a python dictionary with the result.
+This project is a minimalist wrapper around the Apache CloudStack API.  Its
+purpose is to expedite the process of testing the API and building scripts to
+do useful tasks.
+
+This project exposes a single `API` class which has a single `request` method.
+This method takes a python dictionary of request parameters and returns a
+python dictionary with the result.
 
 ``` python
 api.request(self, params)
@@ -30,7 +35,9 @@ accounts = api.request({
 
 INSTALL
 =======
-This project does not need to be installed, it can be run in-place.  However, it does depend on a few libraries to keep things simple.
+
+This project does not need to be installed, it can be run in-place.  However,
+it does depend on a few libraries to keep things simple.
 
 docopt
 ------
@@ -101,9 +108,14 @@ Options:
                               [default: True].
 ```
 
-This project can be run as a stand alone script or the `API` object can be imported into other scripts in this directory as a library.
+This project can be run as a stand alone script or the `API` object can be
+imported into other scripts in this directory as a library.
 
-`cs_api.py` is a stand alone script which can be run on its own, as well as a basic library which can be imported into other scripts.
+`cs_api.py` is a stand alone script which can be run on its own, as well as a
+basic library which can be imported into other scripts.
 
-`api_examples.py` is an example of using the `cs_api.py` script as a library.  In this example, we  simply import the `API` object and start making requests.  This is ideal if you have multiple scripts that do different tasks and you want them to all exist at the same time.  Simply duplicate this file and change the api requests as needed.
-
+`api_examples.py` is an example of using the `cs_api.py` script as a library.
+In this example, we  simply import the `API` object and start making requests.
+This is ideal if you have multiple scripts that do different tasks and you want
+them to all exist at the same time.  Simply duplicate this file and change the
+api requests as needed.
