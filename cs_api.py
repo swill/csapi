@@ -14,24 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Usage:
-  cs_api.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
-  cs_api.py (-h | --help)
-
-Options:
-  -h --help                 Show this screen.
-  --json=<arg>              Path to a JSON config file with the same names as the options (without the -- in front).
-  --api_key=<arg>           CS Api Key.
-  --secret_key=<arg>        CS Secret Key.
-  --endpoint=<arg>          CS Endpoint [default: http://127.0.0.1:8080/client/api].
-  --poll_interval=<arg>     Interval, in seconds, to check for a result on async jobs [default: 5].
-  --logging=<arg>           Boolean to turn on or off logging [default: True].
-  --log=<arg>               The log file to be used [default: logs/cs_api.log].
-  --clear_log=<arg>         Removes the log each time the API object is created [default: True].
-"""
-
-import docopt
 import base64
 import hmac
 import hashlib
@@ -43,42 +25,43 @@ import sys
 import time
 import urllib
 
-class API(object):
+class CsApi(object):
     """
-    Instantiate this class with the docops arguments, then use the 'request' method to make calls to the CloudStack API.
 
-    api = API(__doc__)
+    Instantiate this class with the requred arguments, then use the 'request'
+    method to make calls to the CloudStack API.
+
+    api = CsApi(**args)
     accounts = api.request({
         'command':'listAccounts'
     })
+
     """
-    def __init__(self, doc_str):
-        args = self.load_config(doc_str)
-        self.api_key = args['--api_key']
-        self.secret_key = args['--secret_key']
-        self.endpoint = args['--endpoint']
-        self.poll_interval = float(args['--poll_interval'])
-        self.logging = True if args['--logging'].lower() == 'true' else False
-        self.log = args['--log']
-        self.log_dir = os.path.dirname(self.log)
-        self.clear_log = True if args['--clear_log'].lower() == 'true' else False
+    def __init__(
+        self, 
+        api_key,
+        secret_key,
+        endpoint="http://127.0.0.1:8080/client/api",
+        poll_interval=5,
+        logging=False,
+        log=None,
+        log_dir=None,
+        clear_log=False):
+
+        self.api_key = api_key 
+        self.secret_key = secret_key
+        self.endpoint = endpoint
+        self.poll_interval = poll_interval
+        self.logging = logging
+        self.log = log
+        self.log_dir = log_dir
+        self.clear_log = clear_log
+
         if self.log_dir and not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
         if self.clear_log and os.path.exists(self.log):
             open(self.log, 'w').close()
 
-    def load_config(self, doc_str):
-        args = docopt.docopt(doc_str)
-        is_set = [x.split('=')[0] for x in sys.argv[1:] if len(x.split('=')) > 0 and x.split('=')[0].startswith('-')] # set by cmd line
-        config = None
-        if '--json' in args:
-            with open(args['--json']) as json_config:
-                config = json.load(json_config)
-        if config:
-            for key, value in config.iteritems():
-                if '--%s' % (key) not in is_set:
-                    args['--%s' % (key)] = value
-        return args
 
     def sign(self, params):
         def cs_quote(v):
@@ -153,11 +136,4 @@ class API(object):
             print("ERROR: --api_key, --secret_key and a request command param are all required to use the api...")
             return None
 
-            
-if __name__ == '__main__':
-    api = API(__doc__) # call the constructor with the __doc__ value...
-    
-    pprint.pprint(api.request({
-        'command':'listAccounts'
-    }))
 
