@@ -44,8 +44,7 @@ class CsApi(object):
         endpoint="http://127.0.0.1:8080/client/api",
         poll_interval=5,
         logging=False,
-        log=None,
-        log_dir=None,
+        log="",
         clear_log=False):
 
         self.api_key = api_key 
@@ -54,11 +53,12 @@ class CsApi(object):
         self.poll_interval = poll_interval
         self.logging = logging
         self.log = log
-        self.log_dir = log_dir
+        self.log_dir = os.path.dirname(self.log)
         self.clear_log = clear_log
-
+        
         if self.log_dir and not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
+
         if self.clear_log and os.path.exists(self.log):
             open(self.log, 'w').close()
 

@@ -31,12 +31,12 @@ Options:
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
 """
 
-from cs_api import API
+from csapi import CsApiCli
 import pprint
 
 if __name__ == '__main__':
-    api = API(__doc__) # call the constructor with the __doc__ value...
-
-    pprint.pprint(api.request({
+    api = CsApiCli(__doc__) # call the constructor with the __doc__ value...
+    res = api.request({
         'command':'listAccounts'
-    }))
+    })
+    #pprint.pprint(res)
