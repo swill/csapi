@@ -124,7 +124,7 @@ class API(object):
             if response.ok:
                 result = response.json()
                 result = result[(params['command']).lower()+'response']
-            else if self.logging:
+            elif self.logging:
                 self.logger.debug(response.text)
 
                
