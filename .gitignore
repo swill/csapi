@@ -1,4 +1,5 @@
 *.pyc
+*.json
 logs
 dist/*
 csapi.egg-info/*

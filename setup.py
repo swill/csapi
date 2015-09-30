@@ -14,7 +14,7 @@ if path.exists('README.md'):
 
 setup(
     name='csapi',
-    version='0.0.2',
+    version='0.0.4',
 
     description=description,
     long_description=long_description,

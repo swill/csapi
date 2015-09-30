@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
+This is an example of the doc string needed to use the CLI version of this lib.
+Refer to the cli_example.py file for a working example of this feature.
+
 Usage:
-  cs_api.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
-  cs_api.py (-h | --help)
+  cli_example.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
+  cli_example.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
@@ -31,11 +34,12 @@ Options:
 """
 
 import docopt
+import json
 import sys
 import os
-from .csapi import CsApi
+from .csapi import API
 
-class CsApiCli(CsApi):
+class CLI(API):
     def __init__(self, doc_str):
 
         args = self.load_config(doc_str)
@@ -48,7 +52,7 @@ class CsApiCli(CsApi):
         log = args['--log']
         clear_log = True if args['--clear_log'].lower() == 'true' else False
 
-        super(CsApiCli, self).__init__(
+        super(CLI, self).__init__(
             api_key,
             secret_key,
             endpoint,

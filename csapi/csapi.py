@@ -25,18 +25,17 @@ import sys
 import time
 import urllib
 
-class CsApi(object):
+class API(object):
     """
-
     Instantiate this class with the requred arguments, then use the 'request'
     method to make calls to the CloudStack API.
 
-    api = CsApi(**args)
+    api = API(**args)
     accounts = api.request({
         'command':'listAccounts'
     })
-
     """
+    
     def __init__(
         self, 
         api_key,

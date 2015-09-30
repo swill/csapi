@@ -16,8 +16,8 @@
 
 """
 Usage:
-  api_examples.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
-  api_examples.py (-h | --help)
+  cli_example.py [--json=<arg>] [--api_key=<arg> --secret_key=<arg>] [options]
+  cli_example.py (-h | --help)
 
 Options:
   -h --help                 Show this screen.
@@ -31,12 +31,12 @@ Options:
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
 """
 
-from csapi import CsApiCli
+from csapi import CLI
 import pprint
 
 if __name__ == '__main__':
-    api = CsApiCli(__doc__) # call the constructor with the __doc__ value...
+    api = CLI(__doc__) # call the constructor with the __doc__ value...
     res = api.request({
         'command':'listAccounts'
     })
-    #pprint.pprint(res)
+    pprint.pprint(res)
