@@ -46,7 +46,7 @@ class API(object):
         logging=False,
         log="",
         clear_log=False,
-        sync=True):
+        async=False):
 
         self.api_key = api_key 
         self.secret_key = secret_key
@@ -56,7 +56,7 @@ class API(object):
         self.log = log
         self.log_dir = os.path.dirname(self.log)
         self.clear_log = clear_log
-        self.sync = sync
+        self.async = async
         
 
         if self.logging:
@@ -149,7 +149,7 @@ class API(object):
                 self.logger.info('\n\n\n')
 
             # if the request was an async call, then poll for the result...
-            if self.sync and result and 'jobid' in result.keys():
+            if not self.async and result and 'jobid' in result.keys():
                 if self.logging:
                     self.logger.info('polling...')
                 self.poll_result(result['jobid'])
