@@ -5,7 +5,7 @@ from os import path
 description = 'A minimalist wrapper around the Apache CloudStack API.'
 long_description = description
 
-if os.path.exists('README.md'):
+if path.exists('README.md'):
     import shutil
     shutil.copyfile('README.md', 'README.txt')
     # Get the long description from the README file
@@ -14,7 +14,7 @@ if os.path.exists('README.md'):
 
 setup(
     name='csapi',
-    version='0.0.1',
+    version='0.0.2',
 
     description=description,
     long_description=long_description,

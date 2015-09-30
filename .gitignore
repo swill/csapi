@@ -2,3 +2,4 @@
 logs
 dist/*
 csapi.egg-info/*
+README.txt
