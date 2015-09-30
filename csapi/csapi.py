@@ -63,7 +63,14 @@ class API(object):
 
 
     def sign(self, params):
+
         def cs_quote(v):
+
+            if type(v) is list:
+                return urllib.quote(
+                    str(",".join(v)).encode('utf-8'), safe=".-*_"
+                )
+
             return urllib.quote(str(v).encode('utf-8'), safe=".-*_")
 
         # build the query string
