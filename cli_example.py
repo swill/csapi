@@ -29,6 +29,7 @@ Options:
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
+  --async=<arg>             Boolean to specify if the API should wait for async calls [default: False].
 """
 
 from csapi import CLI
