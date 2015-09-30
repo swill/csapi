@@ -74,7 +74,7 @@ USAGE
 =====
 
 The core functionality is documented above, but it is worth spending a minute
-to better describe the CLI use case.  
+to better describe the `CLI` use case.  
 
 ``` bash
 $ ./cli_example.py --help
