@@ -43,8 +43,8 @@ Here is an example using the parent `API` class:
 
 ``` python
 api = API(api_key="your_api_key", 
-            secret_key="your_secred_key", 
-            endpoint="http://127.0.0.1:8080/client/api")
+          secret_key="your_secred_key", 
+          endpoint="http://127.0.0.1:8080/client/api")
 accounts = api.request({
     'command':'listAccounts'
 })
@@ -64,23 +64,6 @@ INSTALL
 =======
 
 The easiest way to install this library is through `pip`.
-
-docopt
-------
-
-``` bash
-$ pip install docopt
-```
-
-requests
---------
-
-``` bash
-$ pip install requests
-```
-
-csapi
------
 
 ``` bash
 $ pip install csapi
