@@ -24,6 +24,7 @@ import requests
 import sys
 import time
 import urllib
+import logging as _logging
 
 class API(object):
     """
@@ -44,7 +45,8 @@ class API(object):
         poll_interval=5,
         logging=False,
         log="",
-        clear_log=False):
+        clear_log=False,
+        async=False):
 
         self.api_key = api_key 
         self.secret_key = secret_key
@@ -54,16 +56,36 @@ class API(object):
         self.log = log
         self.log_dir = os.path.dirname(self.log)
         self.clear_log = clear_log
+        self.async = async
         
-        if self.log_dir and not os.path.exists(self.log_dir):
-            os.makedirs(self.log_dir)
 
-        if self.clear_log and os.path.exists(self.log):
-            open(self.log, 'w').close()
+        if self.logging:
+
+            if self.log_dir and not os.path.exists(self.log_dir):
+                os.makedirs(self.log_dir)
+
+            if self.clear_log and os.path.exists(self.log):
+                open(self.log, 'w').close()
+
+            _logging.basicConfig(
+                filename=self.log ,
+                level=_logging.DEBUG,
+                format='%(asctime)s %(message)s',
+                datefmt='%d-%m-%Y %I:%M:%S %p' 
+            )
+
+            self.logger = _logging.getLogger(__name__)
 
 
     def sign(self, params):
+
         def cs_quote(v):
+
+            if type(v) is list:
+                return urllib.quote(
+                    str(",".join(v)).encode('utf-8'), safe=".-*_"
+                )
+
             return urllib.quote(str(v).encode('utf-8'), safe=".-*_")
 
         # build the query string
@@ -88,6 +110,7 @@ class API(object):
         :returns: the result of the request as a python dictionary
         :rtype: dict or None
         """
+
         if self.api_key and self.secret_key and 'command' in params:
             result = None
             params['response'] = 'json'
@@ -102,37 +125,62 @@ class API(object):
             if response.ok:
                 result = response.json()
                 result = result[(params['command']).lower()+'response']
-            else:
-                print response.text
+            elif self.logging:
+                if response.status_code == 431: #CS uses this for errors
+                    result = response.json()
+                    result = result[(params['command']).lower()+'response']
+                self.logger.error(response.text)
+
                
             if self.logging:
-                with open(self.log, 'a') as f:
-                    if method:
-                        f.write("%s %s" % (method.upper(), response.url))
-                        f.write('\n')
-                        pprint.pprint(params, f, 2)
-                    else:
-                        f.write("GET %s" % (response.url))
-                        f.write('\n')
-                    f.write('\n')
-                    if response.ok:
-                        #pprint.pprint(response.headers, f, 2)  # if you want to log the headers too...
-                        pprint.pprint(result, f, 2)
-                    else:
-                        f.write(response.text)
-                        f.write('\n')
-                    f.write('\n\n\n')
+                if method:
+                    self.logger.info("%s %s" % (method.upper(), response.url))
+                    self.logger.debug(pprint.pformat(params))
+
+                else:
+                    self.logger.info("GET %s" % (response.url))
+
+                if response.ok:
+                    #pprint.pprint(response.headers, f, 2)  # if you want to log the headers too...
+                    self.logger.debug(pprint.pformat(result))
+                else:
+                    self.logger.info(response.text)
+
+                self.logger.info('\n\n\n')
 
             # if the request was an async call, then poll for the result...
-            if result and 'jobid' in result.keys() and \
-                    ('jobstatus' not in result.keys() or ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
-                print 'polling...'
-                time.sleep(self.poll_interval)
-                result = self.request({'command':'queryAsyncJobResult', 'jobId':result['jobid']})
+            if not self.async and result and 'jobid' in result.keys():
+                if self.logging:
+                    self.logger.info('polling...')
+                self.poll_result(result['jobid'])
 
+            
+            # XXX: result contains stale job status for async requests
             return result
+
         else:
             print("ERROR: --api_key, --secret_key and a request command param are all required to use the api...")
             return None
 
 
+    def poll_result(self, job_id):
+        pending = True
+        result = None
+
+        while pending:
+
+            result = self.request({
+                'command':'queryAsyncJobResult', 
+                'jobId':job_id
+            })
+
+            if result and 'jobid' in result.keys() and \
+                    ('jobstatus' not in result.keys() or\
+                        ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
+                pending = True
+                time.sleep(self.poll_interval)
+
+            else:
+                pending = False
+
+        return result
