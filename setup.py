@@ -2,17 +2,21 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-here = path.abspath(path.dirname(__file__))
+description = 'A minimalist wrapper around the Apache CloudStack API.'
+long_description = description
 
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+if os.path.exists('README.md'):
+    import shutil
+    shutil.copyfile('README.md', 'README.txt')
+    # Get the long description from the README file
+    with open(path.join(path.abspath(path.dirname(__file__)), 'README.txt'), encoding='utf-8') as f:
+        long_description = f.read()
 
 setup(
     name='csapi',
     version='0.0.1',
 
-    description='A minimalist wrapper around the Apache CloudStack API.',
+    description=description,
     long_description=long_description,
 
     url='https://github.com/swill/csapi',

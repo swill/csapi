@@ -1,2 +1,4 @@
 *.pyc
 logs
+dist/*
+csapi.egg-info/*
