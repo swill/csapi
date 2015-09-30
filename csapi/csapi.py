@@ -24,6 +24,7 @@ import requests
 import sys
 import time
 import urllib
+import logging
 
 class API(object):
     """
@@ -44,7 +45,8 @@ class API(object):
         poll_interval=5,
         logging=False,
         log="",
-        clear_log=False):
+        clear_log=False,
+        sync=True):
 
         self.api_key = api_key 
         self.secret_key = secret_key
@@ -54,12 +56,25 @@ class API(object):
         self.log = log
         self.log_dir = os.path.dirname(self.log)
         self.clear_log = clear_log
+        self.sync = sync
         
-        if self.log_dir and not os.path.exists(self.log_dir):
-            os.makedirs(self.log_dir)
 
-        if self.clear_log and os.path.exists(self.log):
-            open(self.log, 'w').close()
+        if self.logging:
+
+            if self.log_dir and not os.path.exists(self.log_dir):
+                os.makedirs(self.log_dir)
+
+            if self.clear_log and os.path.exists(self.log):
+                open(self.log, 'w').close()
+
+            logging.basicConfig(
+                filename=self.log ,
+                level=logging.DEBUG,
+                format='%(asctime)s %(message)s',
+                datefmt='%d-%m-%Y %I:%M:%S %p' 
+            )
+
+            self.logger = logging.getLogger(__name__)
 
 
     def sign(self, params):
@@ -110,30 +125,30 @@ class API(object):
                 result = response.json()
                 result = result[(params['command']).lower()+'response']
             else:
-                print response.text
+                self.logger.debug(response.text)
+
                
             if self.logging:
-                with open(self.log, 'a') as f:
-                    if method:
-                        f.write("%s %s" % (method.upper(), response.url))
-                        f.write('\n')
-                        pprint.pprint(params, f, 2)
-                    else:
-                        f.write("GET %s" % (response.url))
-                        f.write('\n')
-                    f.write('\n')
-                    if response.ok:
-                        #pprint.pprint(response.headers, f, 2)  # if you want to log the headers too...
-                        pprint.pprint(result, f, 2)
-                    else:
-                        f.write(response.text)
-                        f.write('\n')
-                    f.write('\n\n\n')
+                if method:
+                    self.logger.info("%s %s" % (method.upper(), response.url))
+                    # XXX: Does this go to log or stdout?
+                    self.logger.debug(pprint.pformat(params))
+                else:
+                    self.logger.info("GET %s" % (response.url))
+
+                if response.ok:
+                    #pprint.pprint(response.headers, f, 2)  # if you want to log the headers too...
+                    self.logger.debug(pprint.pformat(result))
+                else:
+                    self.logger.info(response.text)
+
+                self.logger.info('\n\n\n')
 
             # if the request was an async call, then poll for the result...
-            if result and 'jobid' in result.keys() and \
+            if self.sync and result and 'jobid' in result.keys() and \
                     ('jobstatus' not in result.keys() or ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
-                print 'polling...'
+                if self.logging:
+                    self.logger.info('polling...')
                 time.sleep(self.poll_interval)
                 result = self.request({'command':'queryAsyncJobResult', 'jobId':result['jobid']})
 
