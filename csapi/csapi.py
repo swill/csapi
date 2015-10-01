@@ -149,38 +149,26 @@ class API(object):
                 self.logger.info('\n\n\n')
 
             # if the request was an async call, then poll for the result...
-            if not self.async and result and 'jobid' in result.keys():
+            if not self.async and result and 'jobid' in result.keys() and \
+                    ('jobstatus' not in result.keys() or ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
+
                 if self.logging:
-                    self.logger.info('polling...')
-                self.poll_result(result['jobid'])
+                     self.logger.info('polling...')
+
+                time.sleep(self.poll_interval)
+                result = self.request({
+                    'command':'queryAsyncJobResult',
+                    'jobId':result['jobid']
+                })
+
+                if result and 'jobstatus' in result and \
+                    result['jobstatus'] == 1 and 'jobresult' in result:
+
+                    result = result['jobresult']
 
             
-            # XXX: result contains stale job status for async requests
             return result
 
         else:
             print("ERROR: --api_key, --secret_key and a request command param are all required to use the api...")
             return None
-
-
-    def poll_result(self, job_id):
-        pending = True
-        result = None
-
-        while pending:
-
-            result = self.request({
-                'command':'queryAsyncJobResult', 
-                'jobId':job_id
-            })
-
-            if result and 'jobid' in result.keys() and \
-                    ('jobstatus' not in result.keys() or\
-                        ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
-                pending = True
-                time.sleep(self.poll_interval)
-
-            else:
-                pending = False
-
-        return result
