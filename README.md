@@ -13,7 +13,7 @@ https://cloudstack.apache.org/api.html
 There are two ways in which this lib can be consumed:
 
 1. The `API` class can be instantiated from any code.  It has a single `request`
- method. which is used to make API calls against ACS.  This method takes a python 
+ method, which is used to make API calls against ACS.  This method takes a python 
  dictionary of request parameters and returns a python dictionary with the result.
 
 2. The `CLI` class is a subclass of `API` and is designed to be a convenience
@@ -39,9 +39,10 @@ Builds the request and returns a python dictionary of the result or None.
 :rtype: dict or None
 ```
 
-Here is an example using the parent `API` class:
+**An example using the parent `API` class:**
 
 ``` python
+from csapi import API
 api = API(api_key="your_api_key", 
           secret_key="your_secred_key", 
           endpoint="http://127.0.0.1:8080/client/api")
@@ -50,9 +51,10 @@ accounts = api.request({
 })
 ```
 
-Here is an example using the `CLI` sub-class:
+**An example using the `CLI` sub-class:**
 
 ``` python
+from csapi import CLI
 api = CLI(__doc__)
 accounts = api.request({
     'command':'listAccounts'
@@ -67,6 +69,14 @@ The easiest way to install this library is through `pip`.
 
 ``` bash
 $ pip install csapi
+```
+
+Alternatively, you can pull down the source code directly and install manually.
+
+``` bash
+$ git clone https://github.com/swill/csapi.git
+$ cd csapi
+$ python setup.py install
 ```
 
 

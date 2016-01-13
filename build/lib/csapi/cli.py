@@ -37,18 +37,10 @@ Options:
 import docopt
 import json
 import sys
+import os
 from .csapi import API
 
 class CLI(API):
-    """
-    Instantiate this class with the docops arguments, then use the 'request'
-    method to make calls to the CloudStack API.
-
-    api = CLI(__doc__)
-    accounts = api.request({
-        'command':'listAccounts'
-    })
-    """
     def __init__(self, doc_str):
         args = self.load_config(doc_str)
 
@@ -74,21 +66,21 @@ class CLI(API):
 
 
     def load_config(self, doc_str):
-        args = docopt.docopt(doc_str)
-
-        is_set = [
-            x.split('=')[0] \
-            for x in sys.argv[1:] \
-            if len(x.split('=')) > 0 and x.split('=')[0].startswith('-')
-        ] # set by cmd line
-
-        config = None
-        if '--json' in args and args['--json']:
-            with open(args['--json']) as json_config:
-                config = json.load(json_config)
-
-        if config:
-            for key, value in config.iteritems():
-                if '--%s' % (key) not in is_set:
-                    args['--%s' % (key)] = value
-        return args
+      args = docopt.docopt(doc_str)
+   
+      is_set = [
+          x.split('=')[0] \
+          for x in sys.argv[1:] \
+          if len(x.split('=')) > 0 and x.split('=')[0].startswith('-')
+      ] # set by cmd line
+   
+      config = None
+      if '--json' in args and args['--json']:
+          with open(args['--json']) as json_config:
+              config = json.load(json_config)
+   
+      if config:
+          for key, value in config.iteritems():
+              if '--%s' % (key) not in is_set:
+                  args['--%s' % (key)] = value
+      return args

@@ -66,7 +66,7 @@ class API(object):
                 open(self.log, 'w').close()
 
             _logging.basicConfig(
-                filename=self.log,
+                filename=self.log ,
                 level=_logging.DEBUG,
                 format='%(asctime)s %(message)s',
                 datefmt='%d-%m-%Y %I:%M:%S %p' 
@@ -158,5 +158,5 @@ class API(object):
                     result = result['jobresult']
             return result
         else:
-            print("ERROR: 'api_key', 'secret_key' and a request 'command' param are all required to use the api...")
+            print("ERROR: --api_key, --secret_key and a request command param are all required to use the api...")
             return None
