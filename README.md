@@ -107,7 +107,6 @@ Options:
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created 
                               [default: True].
-  --async=<arg>             Boolean to specify if the API should wait for async calls 
-                              [default: False].
+  --poll_async=<arg>        Poll and wait for async job results [default: True].
 ```
 

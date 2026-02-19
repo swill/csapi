@@ -31,7 +31,7 @@ Options:
   --logging=<arg>           Boolean to turn on or off logging [default: True].
   --log=<arg>               The log file to be used [default: logs/cs_api.log].
   --clear_log=<arg>         Removes the log each time the API object is created [default: True].
-  --async=<arg>             Boolean to specify if the API should wait for async calls [default: False].
+  --poll_async=<arg>        Poll and wait for async job results [default: True].
 """
 
 import docopt
@@ -59,7 +59,7 @@ class CLI(API):
         logging = True if args['--logging'].lower() == 'true' else False
         log = args['--log']
         clear_log = True if args['--clear_log'].lower() == 'true' else False
-        async = True if args['--async'].lower() == 'true' else False
+        poll_async = True if args['--poll_async'].lower() == 'true' else False
 
         super(CLI, self).__init__(
             api_key,
@@ -69,7 +69,7 @@ class CLI(API):
             logging,
             log,
             clear_log,
-            async
+            poll_async
         )
 
 
@@ -88,7 +88,7 @@ class CLI(API):
                 config = json.load(json_config)
 
         if config:
-            for key, value in config.iteritems():
+            for key, value in config.items():
                 if '--%s' % (key) not in is_set:
                     args['--%s' % (key)] = value
         return args

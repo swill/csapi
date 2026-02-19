@@ -14,7 +14,7 @@ if path.exists('README.md'):
 
 setup(
     name='csapi',
-    version='0.0.8',
+    version='0.1.0',
 
     description=description,
     long_description=long_description,
@@ -27,4 +27,19 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
 
     install_requires=['requests', 'docopt'],
+
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
+    classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+    ],
 )

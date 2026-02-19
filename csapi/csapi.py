@@ -23,8 +23,12 @@ import pprint
 import requests
 import sys
 import time
-import urllib
 import logging as _logging
+
+try:
+    from urllib import quote  # Python 2
+except ImportError:
+    from urllib.parse import quote  # Python 3
 
 class API(object):
     """
@@ -38,7 +42,7 @@ class API(object):
     """
     
     def __init__(
-            self, 
+            self,
             api_key,
             secret_key,
             endpoint="http://127.0.0.1:8080/client/api",
@@ -46,9 +50,9 @@ class API(object):
             logging=False,
             log="",
             clear_log=False,
-            async=False):
+            poll_async=True):
 
-        self.api_key = api_key 
+        self.api_key = api_key
         self.secret_key = secret_key
         self.endpoint = endpoint
         self.poll_interval = poll_interval
@@ -56,7 +60,7 @@ class API(object):
         self.log = log
         self.log_dir = os.path.dirname(self.log)
         self.clear_log = clear_log
-        self.async = async
+        self.poll_async = poll_async
         
         if self.logging:
             if self.log_dir and not os.path.exists(self.log_dir):
@@ -77,11 +81,9 @@ class API(object):
 
     def sign(self, params):
         def cs_quote(v):
-            if type(v) is list:
-                return urllib.quote(
-                    str(",".join(v)).encode('utf-8'), safe=".-*_"
-                )
-            return urllib.quote(str(v).encode('utf-8'), safe=".-*_")
+            if isinstance(v, list):
+                return quote(str(",".join(v)).encode('utf-8'), safe=".-*_")
+            return quote(str(v).encode('utf-8'), safe=".-*_")
 
         # build the query string
         query = "&".join(sorted([
@@ -143,7 +145,7 @@ class API(object):
                 self.logger.info('\n\n\n')
 
             # if the request was an async call, then poll for the result...
-            if not self.async and result and 'jobid' in result.keys() and \
+            if self.poll_async and result and 'jobid' in result.keys() and \
                     ('jobstatus' not in result.keys() or ('jobstatus' in result.keys() and result['jobstatus'] == 0)):
                 if self.logging:
                      self.logger.info('polling...')
